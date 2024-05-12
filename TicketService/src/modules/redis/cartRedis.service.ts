@@ -2,12 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientBase } from './redis.service.abstract';
 import Redis from 'ioredis';
 import { ClientProxy } from '@nestjs/microservices';
-import { v4 as uuidv4 } from 'uuid';
-import { CartItemDto } from 'src/dto/cart.dto';
-import { TicketDataDto } from 'src/dto/ticketData.dto';
-import { ConfigService } from '@nestjs/config';
-import { TRAIN_RMQ_SERVICE } from 'src/constants/services.constants';
-import { UPDATE_PLACE_STATUS } from 'src/constants/rmq-cmds.constants';
+import * as uuid from 'uuid';
+import { CartItemDto } from '../../dto/cart.dto';
+import { TicketDataDto } from '../../dto/ticketData.dto';
+import { TRAIN_RMQ_SERVICE } from '../../constants/services.constants';
+import { UPDATE_PLACE_STATUS } from '../../constants/rmq-cmds.constants';
 
 @Injectable()
 export class CartRedisService extends RedisClientBase {
@@ -56,7 +55,7 @@ export class CartRedisService extends RedisClientBase {
         const keysAndValues: CartItemDto[] = [];
 
         for (const ticket of tickets) {
-            const ticketId = uuidv4();
+            const ticketId = uuid.v4();
             const ticketKey = `ticket:${ticketId}:${userId}`
 
             const ticketJSON = JSON.stringify(ticket);
