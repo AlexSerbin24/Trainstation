@@ -1,5 +1,5 @@
 // rmq.module.ts
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RmqService } from './rmq.service';
 
@@ -9,6 +9,7 @@ export interface RmqModuleOptions {
   urls?: string[];
 }
 
+@Global()
 @Module({
   providers: [RmqService],
   exports: [RmqService],
@@ -18,8 +19,9 @@ export class RmqModule {
     return {
       module: RmqModule,
       imports: [
-        ClientsModule.registerAsync([
-          {
+        ClientsModule.registerAsync({
+          isGlobal:true,
+          clients: [{
             name: options.name,
             useFactory: () => ({
               transport: Transport.RMQ,
@@ -28,8 +30,8 @@ export class RmqModule {
                 queue: options.queue,
               },
             }),
-          },
-        ]),
+          }],
+        }),
       ],
       exports: [ClientsModule],
     };
