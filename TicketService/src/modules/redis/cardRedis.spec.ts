@@ -95,11 +95,10 @@ describe('CartRedisService', () => {
                     placeId: 102,
                 },
             ];
-            const ticketKeys = [`ticket:1:${userId}`, `ticket:1:${userId}`]
 
             jest.spyOn(Redis.prototype, 'set').mockResolvedValue('OK');
 
-            const result = await service.setTickets(userId, tickets);
+            await service.setTickets(userId, tickets);
 
             expect(Redis.prototype.set).toHaveBeenCalledTimes(4);
             expect(mockPlaceClientProxy.emit).toHaveBeenCalledTimes(2);
