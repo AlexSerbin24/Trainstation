@@ -1,0 +1,26 @@
+<h1>Subject: Update on Your Train Journey</h1>
+
+<p>Dear {{firstName}} {{lastName}},</p>
+
+<p>We wanted to inform you that there have been slight updates to your train journey with train number {{trainNumber}}.
+  Please find the updated route segments below:</p>
+
+<ul>
+  {{#each routeSegments}}
+  <li><h3>{{station}}:</h3>
+    {{#if arrivalDate}}
+    Arrival - {{arrivalDate}}
+    <br>
+    {{/if}}
+    {{#if departureDate}}
+    Departure - {{departureDate}}
+    {{/if}}
+  </li>
+  {{/each}}
+</ul>
+
+<p>Rest assured, your previously purchased tickets remain valid for the updated journey.</p>
+
+<p>If you have any questions or concerns, please don't hesitate to contact us.</p>
+
+<p>Best regards,<br>TrainStation</p>

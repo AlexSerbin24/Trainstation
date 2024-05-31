@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/Trainstation/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "watchAssets": true,
+    "tsConfigPath": "apps/Trainstation/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/Trainstation",
+  "projects": {
+    "Trainstation": {
+      "type": "application",
+      "root": "apps/Trainstation",
+      "entryFile": "main",
+      "sourceRoot": "apps/Trainstation/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/Trainstation/tsconfig.app.json"
+      }
+    },
+    "auth-service": {
+      "type": "application",
+      "root": "apps/auth-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth-service/tsconfig.app.json",
+        "assets": [
+          "**/*.env"
+        ]
+      }
+    },
+    "notification-service": {
+      "type": "application",
+      "root": "apps/notification-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification-service/tsconfig.app.json",
+        "assets": [
+          "**/*.env",
+          {
+            "include": "static/**",
+            "outDir": "./dist/apps"
+          }
+        ]
+      }
+    },
+    "ticket-service": {
+      "type": "application",
+      "root": "apps/ticket-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/ticket-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ticket-service/tsconfig.app.json",
+        "assets": [
+          "**/*.env",
+          {
+            "include": "static/**",
+            "outDir": "./dist/apps"
+          }
+        ]
+      }
+    },
+    "train-service": {
+      "type": "application",
+      "root": "apps/train-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/train-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/train-service/tsconfig.app.json",
+        "assets": [
+          "**/*.env"
+        ]
+      }
+    },
+    "rmq": {
+      "type": "library",
+      "root": "libs/rmq",
+      "entryFile": "index",
+      "sourceRoot": "libs/rmq/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rmq/tsconfig.lib.json"
+      }
+    },
+    "queries": {
+      "type": "library",
+      "root": "libs/queries",
+      "entryFile": "index",
+      "sourceRoot": "libs/queries/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/queries/tsconfig.lib.json"
+      }
+    },
+    "dtos": {
+      "type": "library",
+      "root": "libs/dtos",
+      "entryFile": "index",
+      "sourceRoot": "libs/dtos/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/dtos/tsconfig.lib.json"
+      }
+    },
+    "messages": {
+      "type": "library",
+      "root": "libs/messages",
+      "entryFile": "index",
+      "sourceRoot": "libs/messages/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/messages/tsconfig.lib.json"
+      }
+    },
+    "decorators": {
+      "type": "library",
+      "root": "libs/decorators",
+      "entryFile": "index",
+      "sourceRoot": "libs/decorators/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/decorators/tsconfig.lib.json"
+      }
+    }
+  }
+}
