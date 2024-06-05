@@ -8,3 +8,6 @@ export * from './train/train-entities.dto';
 export * from './train/train-shared.dto';
 
 export * from './notification/notifications-payloads.dto'
+
+
+export * from './chat/chat-shared.dto';

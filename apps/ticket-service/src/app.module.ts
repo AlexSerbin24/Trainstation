@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { CartRedisService } from './modules/redis/cartRedis.service';
-import { RedisModule } from './modules/redis/redis.module';
+import { RedisModule } from '@app/redis';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CART_REDIS_SERVICE, TICKET_NOTIFICATION_SERVICE, TICKET_TRAIN_SERVICE } from './constants/services.constants';
 import { RmqModule } from "@app/rmq"

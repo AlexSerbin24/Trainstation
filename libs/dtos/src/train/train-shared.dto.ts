@@ -26,6 +26,8 @@ export type TrainsSearch = {
     arrivalStation: string;
 
     departureTime: Date;
+
+    extraData:boolean
 }
 
 

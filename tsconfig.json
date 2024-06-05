@@ -47,6 +47,12 @@
       ],
       "@app/decorators/*": [
         "libs/decorators/src/*"
+      ],
+      "@app/redis": [
+        "libs/redis/src"
+      ],
+      "@app/redis/*": [
+        "libs/redis/src/*"
       ]
     }
   }

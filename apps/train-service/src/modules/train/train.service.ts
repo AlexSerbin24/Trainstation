@@ -11,6 +11,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { CarriagePlace } from '../../entities/carriagePlace.entity';
 import { CANCEL_TRAIN_NOTIFICATION, GET_TRAIN_TICKETS_OWNERS, GET_USERS_EMAILS, UPDATE_TRAIN_NOTIFICATION } from '@app/messages';
+import { format } from 'date-fns';
 
 @Injectable()
 export class TrainService {
@@ -53,6 +54,9 @@ export class TrainService {
     departureTimeEndOfDay.setHours(23);
     departureTimeEndOfDay.setMinutes(59);
 
+
+
+
     const routeSegments = await this.routeSegmentRepository.find({
       where: {
         station: departureStationObj,
@@ -60,9 +64,16 @@ export class TrainService {
       }
     });
 
+    console.log(routeSegments)
+
+
+
+
+
     const trains: Train[] = [];
+    const relations = trainsSearchData.extraData ? ["trainUnits", "trainUnits.carriagePlaces", "routeSegments"] : []
     for (const departureSegment of routeSegments) {
-      const train = await this.trainRepository.findOne({ where: { id: departureSegment.trainId, trainStatus: TrainStatus.AwaitingDeparture } });
+      const train = await this.trainRepository.findOne({ where: { id: departureSegment.trainId, trainStatus: TrainStatus.AwaitingDeparture }, relations });
       if (train && train.routeSegments.some(seg => seg.stationId === arrivalStationObj.id && departureSegment.id < seg.id)) {
         trains.push(train);
       }
@@ -80,7 +91,7 @@ export class TrainService {
   //TODO: add checking if all stations departure and arrival times are in а correct order
   async createTrain(trainData: TrainCreate): Promise<Train> {
     const { trainNumber, stations, carriages } = trainData;
-    
+
     const trainType = TrainType[trainData.trainType];
 
     // Створення нового рейсу
@@ -110,7 +121,7 @@ export class TrainService {
 
 
       const newRouteSegment = this.routeSegmentRepository.create({
-        trainId:savedTrain.id,
+        trainId: savedTrain.id,
         station,
         departureTime: stationData.departureDate,
         arrivalTime: stationData.arrivalDate
@@ -148,49 +159,49 @@ export class TrainService {
     await this.removeCarriages(carriagesToRemove);
 
     //Stations
-    const routeSegments = await this.routeSegmentRepository.find({ where: { trainId:id }, relations: ["station"] });
+    const routeSegments = await this.routeSegmentRepository.find({ where: { trainId: id }, relations: ["station"] });
 
     // Обновление существующих станций и добавление новых
     for (let i = 0; i < trainData.stations.length; i++) {
-        const stationData = trainData.stations[i];
-        const existingSegment = routeSegments.find(segment => segment.stationId === stationData.stationId);
+      const stationData = trainData.stations[i];
+      const existingSegment = routeSegments.find(segment => segment.stationId === stationData.stationId);
 
-        // Проверка для первой и последней станции
-        if (i === 0 && stationData.arrivalDate) {
-            throw new Error(`Arrival date should not be specified for the initial station`);
+      // Проверка для первой и последней станции
+      if (i === 0 && stationData.arrivalDate) {
+        throw new Error(`Arrival date should not be specified for the initial station`);
+      }
+      if (i === trainData.stations.length - 1 && stationData.departureDate) {
+        throw new Error(`Departure date should not be specified for the final station`);
+      }
+
+      if (existingSegment) {
+
+        // Обновление существующего сегмента маршрута
+        existingSegment.departureTime = stationData.departureDate;
+        existingSegment.arrivalTime = stationData.arrivalDate;
+
+
+        await this.routeSegmentRepository.save(existingSegment);
+      } else {
+        // Добавление нового сегмента маршрута
+        const station = await this.stationRepository.findOne({ where: { id: stationData.stationId } });
+        if (!station) {
+          throw new Error(`Station with id ${stationData.stationId} not found`);
         }
-        if (i === trainData.stations.length - 1 && stationData.departureDate) {
-            throw new Error(`Departure date should not be specified for the final station`);
-        }
 
-        if (existingSegment) {
-          
-            // Обновление существующего сегмента маршрута
-            existingSegment.departureTime = stationData.departureDate;
-            existingSegment.arrivalTime = stationData.arrivalDate;
+        const newRouteSegment = this.routeSegmentRepository.create({
+          train: { id },
+          station,
+          departureTime: stationData.departureDate,
+          arrivalTime: stationData.arrivalDate
+        });
 
-
-            await this.routeSegmentRepository.save(existingSegment);
-        } else {
-            // Добавление нового сегмента маршрута
-            const station = await this.stationRepository.findOne({ where: { id: stationData.stationId } });
-            if (!station) {
-                throw new Error(`Station with id ${stationData.stationId} not found`);
-            }
-
-            const newRouteSegment = this.routeSegmentRepository.create({
-                train: { id },
-                station,
-                departureTime: stationData.departureDate,
-                arrivalTime:  stationData.arrivalDate 
-            });
-
-            await this.routeSegmentRepository.save(newRouteSegment);
-        }
+        await this.routeSegmentRepository.save(newRouteSegment);
+      }
     }
     /*Send message */
 
-    const train = await this.trainRepository.findOne({ where: { id }, relations:["trainUnits", "trainUnits.carriagePlaces", "routeSegments", "routeSegments.station"] });
+    const train = await this.trainRepository.findOne({ where: { id }, relations: ["trainUnits", "trainUnits.carriagePlaces", "routeSegments", "routeSegments.station"] });
 
 
     const usersData = await this.getUsersDataForNotification(train.id)
@@ -243,11 +254,11 @@ export class TrainService {
   }
 
   private async addNewCarriages(trainId: number, newCarriages: CreateCarriage[]): Promise<Carriage[]> {
-    if(!newCarriages.length) return;
+    if (!newCarriages.length) return;
 
     const carriagesToAdd = newCarriages.map(carriage => ({
       ...carriage,
-      carriageType:CarriageType[carriage.carriageType.toUpperCase()],
+      carriageType: CarriageType[carriage.carriageType.toUpperCase()],
       trainId
     }));
 

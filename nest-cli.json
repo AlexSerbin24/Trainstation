@@ -120,6 +120,27 @@
       "compilerOptions": {
         "tsConfigPath": "libs/decorators/tsconfig.lib.json"
       }
+    },
+    "chat-bot-service": {
+      "type": "application",
+      "root": "apps/chat-bot-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/chat-bot-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/chat-bot-service/tsconfig.app.json",
+        "assets": [
+          "**/*.env"
+        ]
+      }
+    },
+    "redis": {
+      "type": "library",
+      "root": "libs/redis",
+      "entryFile": "index",
+      "sourceRoot": "libs/redis/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis/tsconfig.lib.json"
+      }
     }
   }
 }

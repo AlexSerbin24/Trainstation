@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RedisClientBase } from './redis.service.abstract';
+import { RedisClientBase } from '@app/redis/redis.service.abstract';
 import Redis from 'ioredis';
 import { ClientProxy } from '@nestjs/microservices';
 import * as uuid from 'uuid';

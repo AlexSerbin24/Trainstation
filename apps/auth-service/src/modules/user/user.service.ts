@@ -247,6 +247,7 @@ export class UserService {
     return { id, email, accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
+
   async getUsersEmails(userIds: number[]) {
     return (await this.userRepository.find({ where: { id: In(userIds) } })).map(user => ({ email: user.email, firstname: user.name, lastname: user.lastname }));
   }

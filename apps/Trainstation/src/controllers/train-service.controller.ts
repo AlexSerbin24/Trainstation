@@ -30,8 +30,8 @@ export class TrainServiceController {
     }
 
     @Get('/search')
-    async findTrainsByRouteAndDate(@Body() trainsSearchData: TrainsSearch): Promise<TrainDto[]> {
-        return await lastValueFrom(this.gatewayTrainProxy.send<TrainDto[]>({ cmd: FIND_TRAINS_BY_ROUTE_AND_DATE }, trainsSearchData));
+    async findTrainsByRouteAndDate(@Body() trainsSearchData: Omit<TrainsSearch,"extraData">): Promise<TrainDto[]> {
+        return await lastValueFrom(this.gatewayTrainProxy.send<TrainDto[]>({ cmd: FIND_TRAINS_BY_ROUTE_AND_DATE }, {...trainsSearchData,extraData:false}));
     }
 
     @Get('/:id')
