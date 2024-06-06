@@ -17,24 +17,24 @@ export class CartRedisService extends RedisClientBase {
 
     constructor(@Inject(TICKET_TRAIN_SERVICE) private placeClientProxy: ClientProxy) {
         super();
-        // this.redis = new Redis({
-        //     host: process.env.CART_REDIS_HOST,
-        //     port: +process.env.CART_REDIS_PORT,
-        //     db: +process.env.CART_REDIS_DB_INDEX,
-        // });
+        this.redis = new Redis({
+            host: process.env.CART_REDIS_HOST,
+            port: +process.env.CART_REDIS_PORT,
+            db: +process.env.CART_REDIS_DB_INDEX,
+        });
 
-        // this.expireTicketsRedis = new Redis({
-        //     host: process.env.CART_REDIS_HOST,
-        //     port: +process.env.CART_REDIS_PORT,
-        //     db: +process.env.CART_REDIS_DB_INDEX,
-        // });
+        this.expireTicketsRedis = new Redis({
+            host: process.env.CART_REDIS_HOST,
+            port: +process.env.CART_REDIS_PORT,
+            db: +process.env.CART_REDIS_DB_INDEX,
+        });
 
-        // this.redis.on("ready", () => {
-        //     this.redis.config("SET", "notify-keyspace-events", "Ex");
+        this.redis.on("ready", () => {
+            this.redis.config("SET", "notify-keyspace-events", "Ex");
             
-        //     this.expireTicketsRedis.subscribe("__keyevent@0__:expired");
-        //     this.expireTicketsRedis.on('message', this.handleTicketExpire.bind(this));
-        // })
+            this.expireTicketsRedis.subscribe("__keyevent@0__:expired");
+            this.expireTicketsRedis.on('message', this.handleTicketExpire.bind(this));
+        })
 
     }
 
@@ -57,7 +57,6 @@ export class CartRedisService extends RedisClientBase {
     async setTickets(userId: number, tickets: TicketDataDto[]) {
         const keysAndValues: CartItemDto[] = [];
 
-        console.log(tickets)
         for (const ticket of tickets) {
             const ticketId = uuid.v4();
             const ticketKey = `ticket:${ticketId}:${userId}`
