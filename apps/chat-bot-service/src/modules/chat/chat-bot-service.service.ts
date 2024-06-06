@@ -134,7 +134,7 @@ export class ChatBotServiceService {
       return secondResponse
     }
     else{
-      throw new Error("Meessages are not allowd because it exceeds limit")
+      throw new Error("Meessages are not allowd because it exceeds limit");
     }
 
   }
@@ -144,7 +144,4 @@ export class ChatBotServiceService {
     return await lastValueFrom(this.chatTrainProxy.send({ cmd: FIND_TRAINS_BY_ROUTE_AND_DATE }, { departureStation, arrivalStation, departureTime: new Date(departureTime), extraData: true }));
 
   }
-
-
-
 }

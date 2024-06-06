@@ -64,7 +64,7 @@ export class TrainService {
       }
     });
 
-    console.log(routeSegments)
+
 
 
 
@@ -88,7 +88,6 @@ export class TrainService {
   }
 
 
-  //TODO: add checking if all stations departure and arrival times are in а correct order
   async createTrain(trainData: TrainCreate): Promise<Train> {
     const { trainNumber, stations, carriages } = trainData;
 
@@ -161,12 +160,10 @@ export class TrainService {
     //Stations
     const routeSegments = await this.routeSegmentRepository.find({ where: { trainId: id }, relations: ["station"] });
 
-    // Обновление существующих станций и добавление новых
     for (let i = 0; i < trainData.stations.length; i++) {
       const stationData = trainData.stations[i];
       const existingSegment = routeSegments.find(segment => segment.stationId === stationData.stationId);
 
-      // Проверка для первой и последней станции
       if (i === 0 && stationData.arrivalDate) {
         throw new Error(`Arrival date should not be specified for the initial station`);
       }
@@ -205,14 +202,15 @@ export class TrainService {
 
 
     const usersData = await this.getUsersDataForNotification(train.id)
-    console.log(usersData)
-    await lastValueFrom(this.trainNotificationProxy.emit({ cmd: UPDATE_TRAIN_NOTIFICATION }, {
-      users: usersData,
-      trainData: {
-        trainNumber: train.trainNumber,
-        routeSegments: train.routeSegments.map(segm => ({ station: segm.station.name, departureDate: segm.departureTime, arrivalDate: segm.arrivalTime }))
-      }
-    }));
+    if (usersData.length)
+      await lastValueFrom(this.trainNotificationProxy.emit({ cmd: UPDATE_TRAIN_NOTIFICATION }, {
+
+        users: usersData,
+        trainData: {
+          trainNumber: train.trainNumber,
+          routeSegments: train.routeSegments.map(segm => ({ station: segm.station.name, departureDate: segm.departureTime, arrivalDate: segm.arrivalTime }))
+        }
+      }));
 
 
 
@@ -230,13 +228,13 @@ export class TrainService {
     /*Send message */
 
     const usersData = await this.getUsersDataForNotification(id);
-    console.log(usersData)
-    await lastValueFrom(this.trainNotificationProxy.emit({ cmd: CANCEL_TRAIN_NOTIFICATION }, {
-      users: usersData,
-      trainData: {
-        trainNumber: trainToRemove.trainNumber,
-      }
-    }));
+    if (usersData.length)
+      await lastValueFrom(this.trainNotificationProxy.emit({ cmd: CANCEL_TRAIN_NOTIFICATION }, {
+        users: usersData,
+        trainData: {
+          trainNumber: trainToRemove.trainNumber,
+        }
+      }));
 
     return true;
   }
@@ -275,13 +273,13 @@ export class TrainService {
   private async getUsersDataForNotification(trainId: number) {
     const usersIds = await lastValueFrom(this.trainTicketProxy.send<number[]>({ cmd: GET_TRAIN_TICKETS_OWNERS }, trainId));
 
-    const usersData = await lastValueFrom(this.trainAuthProxy.send<
+    const usersData = usersIds.length ? await lastValueFrom(this.trainAuthProxy.send<
       {
         email: string,
         firstname: string,
         lastname: string
 
-      }[]>({ cmd: GET_USERS_EMAILS }, usersIds));
+      }[]>({ cmd: GET_USERS_EMAILS }, usersIds)) : [];
 
     return usersData;
   }

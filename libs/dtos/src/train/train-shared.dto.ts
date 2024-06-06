@@ -9,7 +9,7 @@ export interface StationData {
 
 export interface CreateCarriage {
     id?: number;
-    carriageType: string;
+    carriageType: CarriageType;
     carriageNumber: number;
 }
 

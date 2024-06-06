@@ -55,8 +55,7 @@ describe('UserService', () => {
         })
       })
     } as any;
-    ////////////
-
+    
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
@@ -261,8 +260,21 @@ describe('UserService', () => {
 
   it("should delete token when user logs out", async () => {
     // Arrange
+    const user:User = {
+      id: 1,
+      roleId: 2,
+      tokenId: 1,
+      name: 'test',
+      lastname: 'test',
+      patronymic: 'test',
+      email: 'test@gmail.com',
+      role: null,
+      token: null
+    }
     const refreshToken = "mockRefreshToken";
-
+    tokenServiceMock.findTokenByRefreshToken.mockResolvedValue(1);
+    userRepositoryMock.findOne.mockResolvedValue({user});
+    userRepositoryMock.save.mockResolvedValue({...user, tokenId:null});
     // Act
     await service.logout(refreshToken);
 

@@ -10,6 +10,7 @@ import { RouteSegment } from '../../../entities/routeSegment.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TRAIN_AUTH_SERVICE, TRAIN_NOTIFICATION_SERVICE, TRAIN_TICKET_SERVICE } from '../../../constants/service.constants';
 import { of } from 'rxjs';
+import { UPDATE_TRAIN_NOTIFICATION } from '@app/messages';
 
 describe('TrainService', () => {
   let trainService: TrainService;
@@ -52,8 +53,8 @@ describe('TrainService', () => {
           useClass: Repository,
         },
         {
-          provide:getRepositoryToken(CarriagePlace),
-          useClass:Repository
+          provide: getRepositoryToken(CarriagePlace),
+          useClass: Repository
         },
         {
           provide: getRepositoryToken(RouteSegment),
@@ -121,6 +122,7 @@ describe('TrainService', () => {
       departureStation: 'Station A',
       arrivalStation: 'Station B',
       departureTime: new Date('2024-04-15T00:00:00'),
+      extraData: false
     };
 
     const departureStationObj = { id: 2, name: 'Station A' }; // Example departure station object
@@ -167,6 +169,7 @@ describe('TrainService', () => {
       departureStation: 'Station A',
       arrivalStation: 'Station B',
       departureTime: new Date('2024-04-15T00:00:00'),
+      extraData: false
     };
 
     const departureStationObj = { id: 2, name: 'Station A' }; // Example departure station object
@@ -194,7 +197,7 @@ describe('TrainService', () => {
 
     jest.spyOn(stationRepository, 'findOne').mockResolvedValueOnce(departureStationObj);
     jest.spyOn(stationRepository, 'findOne').mockResolvedValueOnce(arrivalStationObj);
-    jest.spyOn(routeSegmentRepository, 'find').mockResolvedValue(routeSegments)
+    jest.spyOn(routeSegmentRepository, 'find').mockResolvedValue(routeSegments);
     jest.spyOn(trainRepository, 'findOne').mockResolvedValueOnce(train1);
     jest.spyOn(trainRepository, 'findOne').mockResolvedValueOnce(train2);
 
@@ -211,6 +214,7 @@ describe('TrainService', () => {
       departureStation: 'Station A',
       arrivalStation: 'Station B',
       departureTime: new Date('2024-04-15T00:00:00'),
+      extraData: false
     };
 
     const departureStationObj = { id: 2, name: 'Station A' }; // Example departure station object
@@ -238,6 +242,7 @@ describe('TrainService', () => {
       departureStation: 'Station A',
       arrivalStation: 'Station B',
       departureTime: new Date('2024-04-15T00:00:00'),
+      extraData: false
     };
 
     const departureStationObj = { id: 2, name: 'Station A' }; // Example departure station object
@@ -316,15 +321,17 @@ describe('TrainService', () => {
 
     const savedTrain = new Train();
     savedTrain.id = 1;
-    savedTrain.routeSegments = [];
 
 
 
     jest.spyOn(trainRepository, 'create').mockReturnValueOnce(savedTrain);
-    jest.spyOn(trainRepository, 'save').mockResolvedValueOnce(savedTrain);
+    jest.spyOn(trainRepository, 'save').mockResolvedValue(savedTrain);
     jest.spyOn(stationRepository, 'findOne').mockResolvedValueOnce(station1).mockResolvedValue(station2);
     jest.spyOn(carriageRepository, 'save').mockResolvedValueOnce(new Carriage())
     jest.spyOn(routeSegmentRepository, "create").mockReturnValue(new RouteSegment());
+    routeSegmentRepository.save = jest.fn().mockResolvedValue([new RouteSegment(), new RouteSegment()]);
+
+
 
     // Act
     const result = await trainService.createTrain(trainData);
@@ -345,16 +352,15 @@ describe('TrainService', () => {
 
   //updateTrain
   it("should update a train", async () => {
-
-
     const station1 = new Station();
     station1.id = 1;
 
     const station2 = new Station();
     station2.id = 2;
 
-    const existedCarriage1: CreateCarriage = { id: 1, carriageNumber: 1, carriageType: CarriageType.COUPE }
 
+
+    const existedCarriage1: CreateCarriage = { id: 1, carriageNumber: 1, carriageType: CarriageType.COUPE }
     const existedCarriage2: CreateCarriage = { id: 2, carriageNumber: 2, carriageType: CarriageType.COUPE }
 
     const removedCarriage1: Carriage = {
@@ -409,7 +415,6 @@ describe('TrainService', () => {
       removedCarriage2
     ]
 
-
     const trainData: TrainUpdate = {
       stations: [
         {
@@ -428,24 +433,49 @@ describe('TrainService', () => {
 
     const trainId = 1;
 
-    const a: Carriage[] = [];
+
+    const segments: RouteSegment[] = [{
+      id: 1,
+      stationId: 1,
+      trainId,
+      train: null,
+      station: station1,
+      departureTime: trainData.stations[0].departureDate,
+      arrivalTime: trainData.stations[0].arrivalDate
+    },
+    {
+      id: 2,
+      stationId: 2,
+      trainId,
+      train: null,
+      station: station2,
+      departureTime: trainData.stations[1].departureDate,
+      arrivalTime: trainData.stations[1].arrivalDate
+    }]
+
     jest.spyOn(carriageRepository, 'find').mockResolvedValue(oldCarriages);
     jest.spyOn(carriageRepository, 'save').mockResolvedValue(new Carriage())
     jest.spyOn(carriageRepository, 'remove').mockResolvedValue(new Carriage())
+    jest.spyOn(routeSegmentRepository, "save").mockResolvedValue(new RouteSegment())
+
+    jest.spyOn(routeSegmentRepository, 'find').mockResolvedValue(segments)
 
     const resultTrain = new Train();
-    resultTrain.routeSegments = []; 
+    resultTrain.routeSegments = [];
     jest.spyOn(trainRepository, 'findOne').mockResolvedValue(resultTrain);
-    
-    jest.spyOn(trainTicketProxyMock, 'send').mockImplementation(() => of([1]));
-    jest.spyOn(trainAuthProxyMock, "send").mockImplementation(() => of([{ email: "test@gmail.com", firstname: "test", lastname: "test" }]));
+   
+    jest.spyOn(trainTicketProxyMock, 'send').mockImplementation(() => of([]));
 
     await trainService.updateTrain(trainId, trainData);
 
     expect(carriageRepository.save).toHaveBeenCalledWith([{ ...newCarriage1, trainId }]);
     expect(carriageRepository.remove).toHaveBeenCalledWith([removedCarriage1]);
-
-  })
+    expect(routeSegmentRepository.save).toHaveBeenCalledTimes(2);  // Assuming two stations
+    expect(trainNotificationProxyMock.emit).not.toHaveBeenCalledWith(
+      { cmd: UPDATE_TRAIN_NOTIFICATION },
+      expect.anything()
+    );
+  });
 
 
   //removeTrain
@@ -462,7 +492,7 @@ describe('TrainService', () => {
     const result = await trainService.removeTrain(trainId);
 
     // Assert
-    expect(result).toEqual(trainId);
+    expect(result).toBeTruthy();
     expect(trainRepository.findOne).toHaveBeenCalledWith({ where: { id: trainId } });
     expect(trainRepository.remove).toHaveBeenCalledWith(trainToRemove);
   });

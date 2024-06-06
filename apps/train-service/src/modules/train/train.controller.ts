@@ -45,8 +45,6 @@ export class TrainController {
   @MessagePattern({cmd:UPDATE_PLACE_STATUS})
   async updatePlaceStatus(@Payload() data:{placeId:number, isOccupied:boolean}){
     const {placeId,isOccupied} = data;
-    console.log(placeId)
-    console.log(isOccupied)
     return await this.trainService.updatePlaceStatus(placeId,isOccupied)
   }
 

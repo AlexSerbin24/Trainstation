@@ -92,7 +92,7 @@ export class UserService {
     }
 
     // Generate access and refresh tokens
-    console.log(user.roleId);
+    console.log(user);
     const accessToken = this.tokenService.generateAccessToken(user.id, user.email, user.roleId);
     const refreshToken = this.tokenService.generateRefreshToken(user.id, user.email, user.roleId);
     const token = await this.tokenService.saveToken(user.id, refreshToken);
@@ -178,7 +178,6 @@ export class UserService {
    */
   async logout(refreshToken: string): Promise<void> {
     const tokenId = (await this.tokenService.findTokenByRefreshToken(refreshToken)).id;
-    console.log("tieer")
 
     const user = await this.userRepository.findOne({ where: { tokenId } });
     user.tokenId = null;

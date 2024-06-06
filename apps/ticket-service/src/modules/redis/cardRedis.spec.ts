@@ -4,17 +4,22 @@ import Redis from 'ioredis';
 import { ClientProxy } from '@nestjs/microservices';
 import { TicketDataDto } from '@app/dtos';
 import { UPDATE_PLACE_STATUS } from '@app/messages';
+import { TICKET_TRAIN_SERVICE } from '../../constants/services.constants';
+import { of } from 'rxjs';
 
 describe('CartRedisService', () => {
     let service: CartRedisService;
     let mockPlaceClientProxy: ClientProxy;
+    let redisClientMock: jest.Mocked<Redis>;
+    let expireTicketsRedisMock: jest.Mocked<Redis>;
+
     beforeEach(async () => {
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 CartRedisService,
                 {
-                    provide: 'TRAIN_RMQ_SERVICE',
+                    provide: TICKET_TRAIN_SERVICE,
                     useValue: {
                         emit: jest.fn(),
                     },
@@ -22,8 +27,12 @@ describe('CartRedisService', () => {
             ],
         }).compile();
 
+        redisClientMock = new Redis() as jest.Mocked<Redis>;
+
         service = module.get<CartRedisService>(CartRedisService);
-        mockPlaceClientProxy = module.get<ClientProxy>('TRAIN_RMQ_SERVICE');
+        (service as any).expireTicketsRedis = expireTicketsRedisMock;
+        (service as any).redis = redisClientMock
+        mockPlaceClientProxy = module.get<ClientProxy>(TICKET_TRAIN_SERVICE);
 
     });
 
@@ -105,6 +114,8 @@ describe('CartRedisService', () => {
             ];
 
             jest.spyOn(Redis.prototype, 'set').mockResolvedValue('OK');
+            jest.spyOn(Redis.prototype, 'expire').mockResolvedValue(1);
+            jest.spyOn(mockPlaceClientProxy, "emit").mockImplementation(()=>of(true));
 
             await service.setTickets(userId, tickets);
 
