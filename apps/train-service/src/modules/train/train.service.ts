@@ -55,20 +55,12 @@ export class TrainService {
     departureTimeEndOfDay.setMinutes(59);
 
 
-
-
     const routeSegments = await this.routeSegmentRepository.find({
       where: {
         station: departureStationObj,
         departureTime: Between(departureTime, departureTimeEndOfDay),
       }
     });
-
-
-
-
-
-
 
     const trains: Train[] = [];
     const relations = trainsSearchData.extraData ? ["trainUnits", "trainUnits.carriagePlaces", "routeSegments"] : []
