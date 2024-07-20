@@ -1,0 +1,17 @@
+.navbar-links a {
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.navbar-links a:not(:nth-last-child(2)):not(:last-child) {
+    color: black;
+}
+
+
+.navbar-links a:not(:last-child):not(:nth-child(3)) {
+    margin-right: 40px;
+}
+
+.navbar-links a:nth-child(3) {
+    margin-right: 20px;
+}

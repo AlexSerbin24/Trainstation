@@ -1,0 +1,43 @@
+.tickets-list {
+    background-color: white;
+    width: 100%;
+    padding: 20px;
+    font-size: 20px;
+  }
+  
+  .ticket-info {
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  .ticket-info::after {
+    content: '';
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 96%;
+    height: 1.5px;
+    background-color: #000;
+    transform: translateY(-50%);
+    margin: 0 2% auto;
+  }
+  
+  .ticket-info-row,
+  .ticket-info-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .ticket-info-cancel-btn button {
+    margin-left: auto;
+    font-family: Inter;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px 30px;
+    margin-bottom: 5px;
+  }
+  
+  
+  .ticket-info-column {
+    flex: 1;
+  }

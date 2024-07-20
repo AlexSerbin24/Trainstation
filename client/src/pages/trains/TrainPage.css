@@ -1,0 +1,125 @@
+.trains-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.schedule-card {
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 600px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.schedule-time {
+  font-size: 24px;
+
+}
+
+.trains-cards-container{
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+}
+
+
+
+.class-info-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.choose-train-btn{
+  background-color: #00A88F;
+  color: white;
+  padding: 2px 25px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+.add-return-trains-btn{
+  background-color: #00A88F;
+  color: white;
+  padding: 10px 15px;
+  font-size: 18px;
+  border-radius: 10px;
+}
+.train-search-container {
+  background-color: white;
+  padding: 0 16%;
+  font-size: 16px;
+}
+
+.train-current-info {
+  margin-bottom: 15px;
+}
+
+
+.change-trains-filter {
+  background: #4469e2;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-left: 10px
+
+}
+
+
+.date-selector {
+  display: flex;
+  gap: 20px
+}
+
+.date-card {
+  padding: 0px 5px 15px;
+  text-align: center;
+  padding: 10px 0 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.date-card:hover,
+.date-card:hover .date-card-btn {
+  background-color: #ECE8FC;
+}
+
+.date-card-btn {
+  background-color: white;
+  margin-bottom: 35px;
+  font-size: 18px;
+  /* Adjust the font size as needed */
+}
+
+
+.date-card.chosen .date-card-btn {
+  font-weight: bold;
+}
+
+.date-card.chosen::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 4px;
+  /* Thickness of the line */
+  background-color: blue;
+  /* Color of the line */
+  margin: 10px auto 0;
+  /* Space above and center the line */
+}

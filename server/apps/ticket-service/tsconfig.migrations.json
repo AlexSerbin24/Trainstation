@@ -1,0 +1,10 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+      "outDir": "../../dist/apps/ticket-service",
+      "sourceMap": false,
+      "declaration": false
+    },
+    "include": ["src/migrations/**/*"],
+    "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+  }

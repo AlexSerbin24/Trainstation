@@ -1,0 +1,91 @@
+.user-form {
+    min-width: 640px;
+    align-self: center;
+    box-shadow: 0 0 10px grey;
+
+}
+
+.user-form-header {
+    background-color: dodgerblue;
+    text-align: center;
+    padding: 15px;
+    color: white;
+}
+
+.user-form-body {
+    background-color: white;
+    padding: 10px 20px;
+    color: black;
+}
+
+/*Login page*/
+.user-form-body-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-form-body-login label {
+    margin-bottom: 30px;
+}
+
+.user-form-body-login label:first-of-type {
+    margin-top: 10px
+}
+
+
+.forget-password {
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+
+}
+
+.forget-password a {
+    text-decoration: none;
+    color: black;
+}
+
+/*Register page*/
+
+.user-form-body-registration {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-form-body-registration-row:not(:last-of-type) {
+    margin-bottom: 15px;
+}
+
+
+.user-form-body-registration-row {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.registration-btn {
+    align-self: center;
+}
+
+
+.user-form-body-login button,
+.user-form-body-registration button {
+    font-family: Inter;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px 80px;
+    margin-bottom: 5px;
+    border-radius: 25px;
+
+}
+
+.user-form-body-login button:hover,
+.user-form-body-registration button:hover{
+    opacity: 0.7;
+}
+
+.input-error{
+    color: rgb(180, 3, 3);
+}

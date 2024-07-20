@@ -1,0 +1,14 @@
+.authorized{
+    background-color: #00A88F;
+    color:white;
+}
+
+.unauthorized{
+    background-color: #E7EBEB;
+    color: black;
+}
+
+.authorized, .unauthorized{
+    padding: 10px;
+    border-radius: 50px;
+}
